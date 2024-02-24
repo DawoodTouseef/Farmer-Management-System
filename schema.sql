@@ -15,16 +15,17 @@ CREATE TABLE IF NOT EXISTS farm (
     Farm_Id INTEGER PRIMARY KEY AUTOINCREMENT,
     Farm_Name TEXT,
     Farm_Location TEXT,
-    Farm_Area DECIMAL,
+    Farm_Acre DECIMAL,
+    Irrigation_Source TEXT,
     User_id TEXT,
     FOREIGN KEY (User_id) REFERENCES farmer(User_id)
 );
 
 -- Create table for crop allocation
 CREATE TABLE IF NOT EXISTS crop_allocation (
-    Allocation_Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    crop_id INTEGER PRIMARY KEY AUTOINCREMENT,
     Crop_Name TEXT,
-    Crop_Area DECIMAL,
+    Crop_Quantity DECIMAL,
     User_id TEXT,
     FOREIGN KEY (User_id) REFERENCES farmer(User_id)
 );
@@ -33,6 +34,7 @@ CREATE TABLE IF NOT EXISTS crop_allocation (
 CREATE TABLE IF NOT EXISTS seed (
     Seed_Id INTEGER PRIMARY KEY AUTOINCREMENT,
     Seed_Name TEXT,
+    Quantity DECIMAL,
     Seed_Price DECIMAL,
     User_id TEXT,
     Crop_Name TEXT,
@@ -53,6 +55,7 @@ CREATE TABLE IF NOT EXISTS pesticide (
 CREATE TABLE IF NOT EXISTS fertilizer (
     Fertilizer_Id INTEGER PRIMARY KEY AUTOINCREMENT,
     Fertilizer_Name TEXT,
+    Quantity DECIMAL,
     Fertilizer_Price DECIMAL,
     User_id TEXT,
     Crop_Name TEXT,

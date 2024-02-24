@@ -139,43 +139,36 @@ def home():
 def farm():
     msg=""
     cursor = get_db()
-    data=cursor.execute('SELECT * FROM farm WHERE User_id = ? ', (session['id'],))
+    data=cursor.execute('SELECT Farm_Id,Farm_Acre,Farm_Location,Irrigation_Source FROM farm WHERE User_id = ? ', (session['id'],))
     info = data.fetchall()
-    for d in info:
-        i = d.popitem()
-        print(i)
     if len(info)==0:
         msg="Sorry, no data found!!!"
     data = {'user_id': session['id'], 'msg': msg, 'info': info}
-    return render_template('farm.html', **data)
+    return render_template('Farm/farm.html', **data)
 
 # 3 - crop_allocation route - to display all currently allocated crop data
 @app.route('/crop_allocation')
 def crop_allocation():
     msg=""
     cursor =get_db()
-    data=cursor.execute('SELECT * FROM crop_allocation WHERE User_id = ? ', (session['id'],))
+    data=cursor.execute('SELECT crop_id, Crop_Name,Crop_Quantity FROM crop_allocation WHERE User_id = ? ', (session['id'],))
     info = data.fetchall()
-    for d in info:
-	    _ = d.popitem()
     if len(info)==0:
         msg="Sorry, no data found!!!"
     data = {'user_id': session['id'], 'msg': msg, 'info': info}
-    return render_template('crop_allocation.html', **data)
+    return render_template('crop_allocation/crop_allocation.html', **data)
 
 # 4 - seed route - to display all seeds data 
 @app.route('/seed')
 def seed():
     msg=""
     cursor = get_db()
-    data=cursor.execute('SELECT * FROM seed WHERE User_id = ? ', (session['id'],))
+    data=cursor.execute('SELECT Seed_Id,Seed_Name,Quantity,Seed_Price,Crop_Name FROM seed WHERE User_id = ? ', (session['id'],))
     info = data.fetchall()
-    for d in info:
-	    _ = d.popitem()
     if len(info)==0:
         msg="Sorry, no data found!!!"
     data = {'user_id': session['id'], 'msg': msg, 'info': info}
-    return render_template('seed.html', **data)
+    return render_template('seed/seed.html', **data)
 
 # 5 - pesticide route - to display all pesticides data
 @app.route('/pesticide')
@@ -184,8 +177,6 @@ def pesticide():
     cursor = get_db()
     data=cursor.execute('SELECT * FROM pesticide WHERE User_id = ? ', (session['id'],))
     info = data.fetchall()
-    for d in info:
-	    _ = d.popitem()
     if len(info)==0:
         msg="Sorry, no data found!!!"
     data = {'user_id': session['id'], 'msg': msg, 'info': info}
@@ -196,14 +187,12 @@ def pesticide():
 def fertilizer():
     msg=""
     cursor = get_db()
-    data=cursor.execute('SELECT * FROM fertilizer WHERE User_id = ? ', (session['id'],))
+    data=cursor.execute('SELECT Fertilizer_Id,Fertilizer_Name ,Quantity ,Fertilizer_Price ,Crop_Name FROM fertilizer WHERE User_id = ? ', (session['id'],))
     info = data.fetchall()
-    for d in info:
-	    _ = d.popitem()
     if len(info)==0:
         msg="Sorry, no data found!!!"
     data = {'user_id': session['id'], 'msg': msg, 'info': info}
-    return render_template('fertilizer.html', **data)
+    return render_template('fertilizer/fertilizer.html', **data)
 
 # 7 - labour route - to display all labours data
 @app.route('/labour')
@@ -212,8 +201,6 @@ def labour():
     cursor = get_db()
     data=cursor.execute('SELECT * FROM labour WHERE User_id = ? ', (session['id'],))
     info = data.fetchall()
-    for d in info:
-	    _ = d.popitem()
     if len(info)==0:
         msg="Sorry, no data found!!!"
     data = {'user_id': session['id'], 'msg': msg, 'info': info}
@@ -226,8 +213,6 @@ def warehouse():
     cursor = get_db()
     data=cursor.execute('SELECT * FROM warehouse WHERE User_id = ? ', (session['id'],))
     info = data.fetchall()
-    for d in info:
-	    _ = d.popitem()
     if len(info)==0:
         msg="Sorry, no data found!!!"
     data = {'user_id': session['id'], 'msg': msg, 'info': info}
@@ -240,8 +225,6 @@ def crop_market():
     cursor = get_db()
     data=cursor.execute('SELECT * FROM crop_market WHERE User_id = ? ', (session['id'],))
     info = data.fetchall()
-    for d in info:
-	    _ = d.popitem()
     if len(info)==0:
         msg="Sorry, no data found!!!"
     data = {'user_id': session['id'], 'msg': msg, 'info': info}
@@ -271,25 +254,81 @@ def delete():
         msg = 'User Deleted!!!'
     return render_template('login.html', msg = msg)
 
+
+
 # update route - to get old data for update
-@app.route("/update", methods = ['GET', 'POST'])
-def update():
+@app.route("/update_farm", methods = ['GET', 'POST'])
+def update_farm():
     msg = ''
     if request.method == 'POST':
 
-        # getting all old values to update them with new values 
+        # getting all old values to update them with new values
         name = list(request.form.to_dict())[0]
         column_id = request.form[name]
         column, table = name.split('+')
-        sql = "SELECT * FROM " + table + " WHERE " + column + " = '" + column_id + "'"
+        sql = "SELECT  Farm_Acre,Farm_Location,Irrigation_Source FROM " + table + " WHERE " + column + " = '" + column_id + "'"
         cursor = get_db()
         data=cursor.execute(sql)
-        temp = list(data.fetchone().items())[1:-1]
-        info = dict(temp)
-        data = {'info':info, 'user_id': session['id'], 'table': table, 'id': column_id, 'column':column}
-        return render_template('update.html', **data)
-    return render_template('login.html', msg = msg) 
+        info = [dict(row) for row in data.fetchall()]
 
+        data = {'info':info[0], 'user_id': session['id'], 'table': table, 'id': column_id, 'column':column}
+        return render_template('Farm/update_farm.html', **data)
+    return render_template('login.html', msg = msg)
+
+
+# update route - to get old data for update
+@app.route("/update_fertilizer", methods = ['GET', 'POST'])
+def update_fertilizer():
+    msg = ''
+    if request.method == 'POST':
+
+        # getting all old values to update them with new values
+        name = list(request.form.to_dict())[0]
+        column_id = request.form[name]
+        column, table = name.split('+')
+        sql = "SELECT Fertilizer_Name,Quantity,Fertilizer_Price,Crop_Name FROM " + table + " WHERE " + column + " = '" + column_id + "'"
+        cursor = get_db()
+        data=cursor.execute(sql)
+        info=[dict(row) for row in data.fetchall()]
+        data = {'info':info[0], 'user_id': session['id'], 'table': table, 'id': column_id, 'column':column}
+        return render_template('fertilizer/update_fertilizer.html', **data)
+    return render_template('login.html', msg = msg)
+
+@app.route("/update_crop_allocation", methods = ['GET', 'POST'])
+def update_crop_allocation():
+    msg = ''
+    if request.method == 'POST':
+
+        # getting all old values to update them with new values
+        name = list(request.form.to_dict())[0]
+        column_id = request.form[name]
+        column, table = name.split('+')
+        sql = "SELECT  Crop_Name,Crop_Quantity  FROM " + table + " WHERE " + column + " = '" + column_id + "'"
+        cursor = get_db()
+        data=cursor.execute(sql)
+        info = [dict(row) for row in data.fetchall()]
+        data = {'info':info[0], 'user_id': session['id'], 'table': table, 'id': column_id, 'column':column}
+        return render_template('crop_allocation/update_crop_allocation.html', **data)
+    return render_template('login.html', msg = msg)
+
+
+# update route - to get old data for update
+@app.route("/update_seed", methods = ['GET', 'POST'])
+def update_seed():
+    msg = ''
+    if request.method == 'POST':
+
+        # getting all old values to update them with new values
+        name = list(request.form.to_dict())[0]
+        column_id = request.form[name]
+        column, table = name.split('+')
+        sql = "SELECT  Seed_Name,Quantity,Seed_Price,Crop_Name FROM " + table + " WHERE " + column + " = '" + column_id + "'"
+        cursor = get_db()
+        data=cursor.execute(sql)
+        info = [dict(row) for row in data.fetchall()]
+        data = {'info':info[0], 'user_id': session['id'], 'table': table, 'id': column_id, 'column':column}
+        return render_template('Farm/update_farm.html', **data)
+    return render_template('login.html', msg = msg)
 # update_confirm - to update with new data
 @app.route("/update_confirm", methods = ["GET", "post"])
 def update_confirm():
@@ -316,7 +355,6 @@ def update_confirm():
         q2 = q2[:-2]
         q3 = " WHERE " + column + " = '" + column_id + "'"
         sql = q1 + q2 + q3
-
         # update old data with new data
         cursor = get_db()
         cursor.execute(sql)
@@ -325,8 +363,8 @@ def update_confirm():
     return render_template("login.html", msg = msg) 
 
 # add route - to get table, column names to add
-@app.route("/add", methods=['GET', 'POST'])
-def add():
+@app.route("/add_farm", methods=['GET', 'POST'])
+def add_farm():
     msg = ''
     if request.method == 'POST':
         # getting table name
@@ -337,12 +375,76 @@ def add():
         data=cursor.execute("PRAGMA table_info({})".format(table))
         columns = data.fetchall()
         column_names = [column[1] for column in columns if column[1] not in ['User_id']]
-
+        if not  column_names:
+            column_names=["Farm_Acre","Farm_Location","Irrigation_Source"]
+        if not table:
+            table="farm"
         data = {"columns": column_names, "table": table, "user_id": session['id']}
-        return render_template('add.html', **data)
+        return render_template('Farm/add_farm.html', **data)
 
     return render_template('login.html', msg=msg)
 
+@app.route("/add_seed", methods=['GET', 'POST'])
+def add_seed():
+    msg = ''
+    if request.method == 'POST':
+        # getting table name
+        table = request.form.get('table')
+
+        # fetching column names using PRAGMA table_info
+        cursor = get_db()
+        data=cursor.execute("PRAGMA table_info({})".format(table))
+        columns = data.fetchall()
+        column_names = [column[1] for column in columns if column[1] not in ['User_id']]
+        if not  column_names:
+            column_names=["Seed_Name","Quantity","Seed_Price","Crop_Name"]
+        if not table:
+            table="seed"
+        data = {"columns": column_names, "table": table, "user_id": session['id']}
+        return render_template('seed/add_seed.html', **data)
+
+    return render_template('login.html', msg=msg)
+@app.route("/add_fertilizer", methods=['GET', 'POST'])
+def add_fertilizer():
+    msg = ''
+    if request.method == 'POST':
+        # getting table name
+        table = request.form.get('table')
+
+        # fetching column names using PRAGMA table_info
+        cursor = get_db()
+        data=cursor.execute("PRAGMA table_info({})".format(table))
+        columns = data.fetchall()
+        column_names = [column[1] for column in columns if column[1] not in ['User_id']]
+        if not  column_names:
+            column_names=["Fertilizer_Name","Quantity","Fertilizer_Price","Crop_Name"]
+        if not table:
+            table="fertilizer"
+        data = {"columns": column_names, "table": table, "user_id": session['id']}
+        return render_template('fertilizer/add_fertilizer.html', **data)
+
+    return render_template('login.html', msg=msg)
+
+@app.route("/add_crop_allocation", methods=['GET', 'POST'])
+def add_crop_allocation():
+    msg = ''
+    if request.method == 'POST':
+        # getting table name
+        table = request.form.get('table')
+
+        # fetching column names using PRAGMA table_info
+        cursor = get_db()
+        data=cursor.execute("PRAGMA table_info({})".format(table))
+        columns = data.fetchall()
+        column_names = [column[1] for column in columns if column[1] not in ['User_id']]
+        if not  column_names:
+            column_names=["Crop_Name","Crop_Quantity"]
+        if not table:
+            table="crop_allocation"
+        data = {"columns": column_names, "table": table, "user_id": session['id']}
+        return render_template('crop_allocation/add_crop_allocation.html', **data)
+
+    return render_template('login.html', msg=msg)
 
 # add_confirm - to add new data
 @app.route("/add_confirm", methods = ['GET', 'POST'])

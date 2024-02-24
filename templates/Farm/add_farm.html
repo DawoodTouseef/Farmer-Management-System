@@ -16,8 +16,8 @@
 							<h5 class="card-title text-center">Add in {{table}}</h5>
 							<form action="{{ url_for('add_confirm') }}" method="post">
 								{% for col in columns %}
-									<div div class="row">
-										<div div class="col">
+									<div  class="row">
+										<div class="col">
 											<p>{{ col }}</p>
 											<input required type="text"  class="form-control" name="{{ col }}">
 										</div>

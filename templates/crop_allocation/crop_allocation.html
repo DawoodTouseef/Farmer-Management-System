@@ -7,7 +7,7 @@
                     <th>Crop Name</th>
                     <th>Crop Quantity</th>
                     <th colspan="2">Actions</th>
-                    <form action="{{ url_for('add') }}" method="post">
+                    <form action="{{ url_for('add_crop_allocation') }}" method="post">
                         <th>
                             <button type="submit" class="addbtn btn-sm" name="crop_id" value="crop_allocation">Add</button>
                         </th>
@@ -17,17 +17,17 @@
                 <tbody>
                     {% for record in info %}
                     <tr>
-                        {% for value in record.values() %}
+                        {% for value in record %}
                         <td>{{ value }}</td>
                         {% endfor %}
-                        <form action="{{ url_for('update') }}" method="post">
+                        <form action="{{ url_for('update_crop_allocation') }}" method="post">
                             <td>
-                                <button type="submit" class="udtbtn btn-sm" value = '{{ record.crop_id }}' name="crop_id+crop_allocation" >Update</button>
+                                <button type="submit" class="udtbtn btn-sm" value = "{{ record['crop_id'] }}" name="crop_id+crop_allocation" >Update</button>
                             </td>
                         </form>
                         <form action="{{ url_for('delete') }}" method="post">
                             <td>
-                                <button type="submit" class="dltbtn btn-sm" value = '{{ record.crop_id }}' name="crop_id+crop_allocation" >Delete</button>
+                                <button type="submit" class="dltbtn btn-sm" value = "{{ record['crop_id'] }}" name="crop_id+crop_allocation" >Delete</button>
                             </td>
                         </form>
                     </tr>
