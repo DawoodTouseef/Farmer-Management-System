@@ -5,7 +5,7 @@ This project is very usefull in real-life because it can use for store, process,
 ### Built with
 * Frontend - HTML, CSS, Bootstrap4
 * Backend - Python(Flask)  
-* Database - MySQL
+* Database - Sqlite3
 
 ### Project images
 #### Login page
