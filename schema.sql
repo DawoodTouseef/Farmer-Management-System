@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS seed (
 CREATE TABLE IF NOT EXISTS pesticide (
     Pesticide_Id INTEGER PRIMARY KEY AUTOINCREMENT,
     Pesticide_Name TEXT,
+    Quantity DECIMAL,
     Pesticide_Price DECIMAL,
     User_id TEXT,
     Crop_Name TEXT,
@@ -65,7 +66,12 @@ CREATE TABLE IF NOT EXISTS fertilizer (
 -- Create table for labor data
 CREATE TABLE IF NOT EXISTS labour (
     Labour_Id INTEGER PRIMARY KEY AUTOINCREMENT,
-    Labour_Name TEXT,
+    First_Name TEXT,
+    Last_Name TEXT,
+    Address TEXT,
+    Contact_No INTEGER,
+    work TEXT,
+    Working_Hours TEXT,
     Salary DECIMAL,
     User_id TEXT,
     FOREIGN KEY (User_id) REFERENCES farmer(User_id)
@@ -74,8 +80,8 @@ CREATE TABLE IF NOT EXISTS labour (
 -- Create table for warehouse data
 CREATE TABLE IF NOT EXISTS warehouse (
     Warehouse_Id INTEGER PRIMARY KEY AUTOINCREMENT,
-    Warehouse_Name TEXT,
-    Capacity DECIMAL,
+    crop_stored TEXT,
+    Total_Capacity DECIMAL,
     User_id TEXT,
     FOREIGN KEY (User_id) REFERENCES farmer(User_id)
 );
@@ -83,9 +89,11 @@ CREATE TABLE IF NOT EXISTS warehouse (
 -- Create table for crop market data
 CREATE TABLE IF NOT EXISTS crop_market (
     Market_Id INTEGER PRIMARY KEY AUTOINCREMENT,
-    Market_Name TEXT,
+    Address TEXT,
+    Selling_Quantity DECIMAL,
     Selling_Price DECIMAL,
     User_id TEXT,
     Crop_Name TEXT,
+    Selling_Date TEXT,
     FOREIGN KEY (User_id) REFERENCES farmer(User_id)
 );

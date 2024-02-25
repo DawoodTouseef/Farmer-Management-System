@@ -10,9 +10,9 @@
                         <th>Selling Price</th>
                         <th>Selling Date</th>
                         <th colspan="2">Actions</th>
-                        <form action="{{ url_for('add') }}" method="post">
+                        <form action="{{ url_for('add_crop_market') }}" method="post">
                             <th>
-                                <button type="submit" class="addbtn btn-sm" name="crop_market_id" value="crop_market">Add</button>
+                                <button type="submit" class="addbtn btn-sm" name="Market_Id" value="crop_market">Add</button>
                             </th>
                         </form>
                         <th></th>
@@ -21,17 +21,17 @@
                 <tbody>
                     {% for record in info %}
                     <tr>
-                        {% for value in record.values() %}
+                        {% for value in record %}
                         <td>{{ value }}</td>
                         {% endfor %}
-                        <form action="{{ url_for('update') }}" method="post">
+                        <form action="{{ url_for('update_crop_market') }}" method="post">
                             <td>
-                                <button type="submit" class="udtbtn btn-sm" value = '{{ record.crop_market_id }}' name="crop_market_id+crop_market" >Update</button>
+                                <button type="submit" class="udtbtn btn-sm" value = '{{ record.Market_Id }}' name="Market_Id+crop_market" >Update</button>
                             </td>
                         </form>
                         <form action="{{ url_for('delete') }}" method="post">
                             <td>
-                                <button type="submit" class="dltbtn btn-sm" value = '{{ record.crop_market_id }}' name="crop_market_id+crop_market" >Delete</button>
+                                <button type="submit" class="dltbtn btn-sm" value = '{{ record.Market_Id }}' name="Market_Id+crop_market" >Delete</button>
                             </td>
                         </form>
                     </tr>

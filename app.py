@@ -175,12 +175,12 @@ def seed():
 def pesticide():
     msg=""
     cursor = get_db()
-    data=cursor.execute('SELECT * FROM pesticide WHERE User_id = ? ', (session['id'],))
+    data=cursor.execute('SELECT Pesticide_Id,Pesticide_Name,Quantity,Pesticide_Price,Crop_Name FROM pesticide WHERE User_id = ? ', (session['id'],))
     info = data.fetchall()
     if len(info)==0:
         msg="Sorry, no data found!!!"
     data = {'user_id': session['id'], 'msg': msg, 'info': info}
-    return render_template('pesticide.html', **data)
+    return render_template('pesticide/pesticide.html', **data)
 
 # 6 - fertilizers route - to display all fertilizers data
 @app.route('/fertilizer')
@@ -199,36 +199,36 @@ def fertilizer():
 def labour():
     msg=""
     cursor = get_db()
-    data=cursor.execute('SELECT * FROM labour WHERE User_id = ? ', (session['id'],))
+    data=cursor.execute('SELECT Labour_Id,First_Name,Last_Name,Address,Contact_No,work,Working_Hours,Salary FROM labour WHERE User_id = ? ', (session['id'],))
     info = data.fetchall()
     if len(info)==0:
         msg="Sorry, no data found!!!"
     data = {'user_id': session['id'], 'msg': msg, 'info': info}
-    return render_template('labour.html', **data)
+    return render_template('labour/labour.html', **data)
 
 # 8 - warehouse route - to display all warehouses data where crops are stored
 @app.route('/warehouse')
 def warehouse():
     msg=""
     cursor = get_db()
-    data=cursor.execute('SELECT * FROM warehouse WHERE User_id = ? ', (session['id'],))
+    data=cursor.execute('SELECT Warehouse_Id,crop_stored,Total_Capacity FROM warehouse WHERE User_id = ? ', (session['id'],))
     info = data.fetchall()
     if len(info)==0:
         msg="Sorry, no data found!!!"
     data = {'user_id': session['id'], 'msg': msg, 'info': info}
-    return render_template('warehouse.html', **data)
+    return render_template('warehouse/warehouse.html', **data)
 
 # 9 - crop_market route - to display all markets data where crops are sold
 @app.route('/crop_market')
 def crop_market():
     msg=""
     cursor = get_db()
-    data=cursor.execute('SELECT * FROM crop_market WHERE User_id = ? ', (session['id'],))
+    data=cursor.execute('SELECT Market_Id ,Address,Crop_Name,Selling_Quantity,Selling_Price,Selling_Date FROM crop_market WHERE User_id = ? ', (session['id'],))
     info = data.fetchall()
     if len(info)==0:
         msg="Sorry, no data found!!!"
     data = {'user_id': session['id'], 'msg': msg, 'info': info}
-    return render_template('crop_market.html', **data)
+    return render_template('crop_market/crop_market.html', **data)
 
 # delete route - to delete any entry or account
 @app.route("/delete", methods = ['GET', 'POST'])
@@ -276,6 +276,60 @@ def update_farm():
     return render_template('login.html', msg = msg)
 
 
+@app.route("/update_warehouse", methods = ['GET', 'POST'])
+def update_warehouse():
+    msg = ''
+    if request.method == 'POST':
+
+        # getting all old values to update them with new values
+        name = list(request.form.to_dict())[0]
+        column_id = request.form[name]
+        column, table = name.split('+')
+        sql = "SELECT  crop_stored,Total_Capacity FROM " + table + " WHERE " + column + " = '" + column_id + "'"
+        cursor = get_db()
+        data=cursor.execute(sql)
+        info = [dict(row) for row in data.fetchall()]
+
+        data = {'info':info[0], 'user_id': session['id'], 'table': table, 'id': column_id, 'column':column}
+        return render_template('warehouse/update_warehouse.html', **data)
+    return render_template('login.html', msg = msg)
+# update route - to get old data for update
+@app.route("/update_labour", methods = ['GET', 'POST'])
+def update_labour():
+    msg = ''
+    if request.method == 'POST':
+
+        # getting all old values to update them with new values
+        name = list(request.form.to_dict())[0]
+        column_id = request.form[name]
+        column, table = name.split('+')
+        sql = "SELECT  First_Name,Last_Name,Address,Contact_No,work,Working_Hours,Salary FROM " + table + " WHERE " + column + " = '" + column_id + "'"
+        cursor = get_db()
+        data=cursor.execute(sql)
+        info = [dict(row) for row in data.fetchall()]
+
+        data = {'info':info[0], 'user_id': session['id'], 'table': table, 'id': column_id, 'column':column}
+        return render_template('labour/update_labour.html', **data)
+    return render_template('login.html', msg = msg)
+# update route - to get old data for update
+@app.route("/update_pesticide", methods = ['GET', 'POST'])
+def update_pesticide():
+    msg = ''
+    if request.method == 'POST':
+
+        # getting all old values to update them with new values
+        name = list(request.form.to_dict())[0]
+        column_id = request.form[name]
+        column, table = name.split('+')
+        sql = "SELECT  Pesticide_Name,Quantity,Pesticide_Price,Crop_Name FROM " + table + " WHERE " + column + " = '" + column_id + "'"
+        cursor = get_db()
+        data=cursor.execute(sql)
+        info = [dict(row) for row in data.fetchall()]
+
+        data = {'info':info[0], 'user_id': session['id'], 'table': table, 'id': column_id, 'column':column}
+        return render_template('pesticide/update_pesticide.html', **data)
+    return render_template('login.html', msg = msg)
+
 # update route - to get old data for update
 @app.route("/update_fertilizer", methods = ['GET', 'POST'])
 def update_fertilizer():
@@ -311,13 +365,29 @@ def update_crop_allocation():
         return render_template('crop_allocation/update_crop_allocation.html', **data)
     return render_template('login.html', msg = msg)
 
+@app.route("/update_crop_market", methods = ['GET', 'POST'])
+def update_crop_market():
+    msg = ''
+    if request.method == 'POST':
+
+        # getting all old values to update them with new values
+        name = list(request.form.to_dict())[0]
+        column_id = request.form[name]
+        column, table = name.split('+')
+        sql = "SELECT  Crop_Name,Address,Selling_Quantity,Selling_Price,Selling_Date  FROM " + table + " WHERE " + column + " = '" + column_id + "'"
+        cursor = get_db()
+        print(sql)
+        data=cursor.execute(sql)
+        info = [dict(row) for row in data.fetchall()]
+        data = {'info':info[0], 'user_id': session['id'], 'table': table, 'id': column_id, 'column':column}
+        return render_template('crop_market/update_crop_market.html', **data)
+    return render_template('login.html', msg = msg)
 
 # update route - to get old data for update
 @app.route("/update_seed", methods = ['GET', 'POST'])
 def update_seed():
     msg = ''
     if request.method == 'POST':
-
         # getting all old values to update them with new values
         name = list(request.form.to_dict())[0]
         column_id = request.form[name]
@@ -327,7 +397,7 @@ def update_seed():
         data=cursor.execute(sql)
         info = [dict(row) for row in data.fetchall()]
         data = {'info':info[0], 'user_id': session['id'], 'table': table, 'id': column_id, 'column':column}
-        return render_template('Farm/update_farm.html', **data)
+        return render_template('seed/update_seed.html', **data)
     return render_template('login.html', msg = msg)
 # update_confirm - to update with new data
 @app.route("/update_confirm", methods = ["GET", "post"])
@@ -384,6 +454,66 @@ def add_farm():
 
     return render_template('login.html', msg=msg)
 
+@app.route("/add_crop_market", methods=['GET', 'POST'])
+def add_crop_market():
+    msg = ''
+    if request.method == 'POST':
+        # getting table name
+        table = request.form.get('table')
+
+        # fetching column names using PRAGMA table_info
+        cursor = get_db()
+        data=cursor.execute("PRAGMA table_info({})".format(table))
+        columns = data.fetchall()
+        column_names = [column[1] for column in columns if column[1] not in ['User_id']]
+        if not  column_names:
+            column_names=["Address","Crop_Name","Selling_Quantity","Selling_Price","Selling_Date"]
+        if not table:
+            table="crop_market"
+        data = {"columns": column_names, "table": table, "user_id": session['id']}
+        return render_template('crop_market/add_crop_market.html', **data)
+
+    return render_template('login.html', msg=msg)
+@app.route("/add_warehouse", methods=['GET', 'POST'])
+def add_warehouse():
+    msg = ''
+    if request.method == 'POST':
+        # getting table name
+        table = request.form.get('table')
+
+        # fetching column names using PRAGMA table_info
+        cursor = get_db()
+        data=cursor.execute("PRAGMA table_info({})".format(table))
+        columns = data.fetchall()
+        column_names = [column[1] for column in columns if column[1] not in ['User_id']]
+        if not  column_names:
+            column_names=["crop_stored"	,"Total_Capacity"]
+        if not table:
+            table="warehouse"
+        data = {"columns": column_names, "table": table, "user_id": session['id']}
+        return render_template('warehouse/add_warehouse.html', **data)
+
+    return render_template('login.html', msg=msg)
+@app.route("/add_labour", methods=['GET', 'POST'])
+def add_labour():
+    msg = ''
+    if request.method == 'POST':
+        # getting table name
+        table = request.form.get('table')
+
+        # fetching column names using PRAGMA table_info
+        cursor = get_db()
+        data=cursor.execute("PRAGMA table_info({})".format(table))
+        columns = data.fetchall()
+        column_names = [column[1] for column in columns if column[1] not in ['User_id']]
+        if not  column_names:
+            column_names=["First_Name"	,"Last_Name"	,"Address"	,"Contact_No"	,"work",	"Working_Hours"	,"Salary"]
+        if not table:
+            table="labour"
+        data = {"columns": column_names, "table": table, "user_id": session['id']}
+        return render_template('Farm/add_farm.html', **data)
+
+    return render_template('login.html', msg=msg)
 @app.route("/add_seed", methods=['GET', 'POST'])
 def add_seed():
     msg = ''
@@ -446,6 +576,27 @@ def add_crop_allocation():
 
     return render_template('login.html', msg=msg)
 
+
+@app.route("/add_pesticide", methods=['GET', 'POST'])
+def add_pesticide():
+    msg = ''
+    if request.method == 'POST':
+        # getting table name
+        table = request.form.get('table')
+
+        # fetching column names using PRAGMA table_info
+        cursor = get_db()
+        data=cursor.execute("PRAGMA table_info({})".format(table))
+        columns = data.fetchall()
+        column_names = [column[1] for column in columns if column[1] not in ['User_id']]
+        if not  column_names:
+            column_names=["Pesticide_Name","Quantity","Pesticide_Price","Crop_Name"]
+        if not table:
+            table="pesticide"
+        data = {"columns": column_names, "table": table, "user_id": session['id']}
+        return render_template('pesticide/add_pesticide.html', **data)
+
+    return render_template('login.html', msg=msg)
 # add_confirm - to add new data
 @app.route("/add_confirm", methods = ['GET', 'POST'])
 def add_confirm():
@@ -477,6 +628,7 @@ def add_confirm():
         # add new data in our database
         sql = q1 + q2
         cursor = get_db()
+        print(sql)
         cursor.execute(sql)
         cursor.commit()
         return redirect(table)
@@ -485,8 +637,7 @@ def add_confirm():
 # to calulate sum
 def calculate_total(d):
     total = 0
-    for v in d:
-        total += list(v.values())[0]
+    total += d
     return(total)
 
 # profit_loss_overall route - to caluculate overall profit-loss
@@ -498,32 +649,32 @@ def profit_loss_overall():
     sql1 = "SELECT selling_price FROM crop_market WHERE User_id = '" + session['id'] + "' "
     cursor = get_db()
     data=cursor.execute(sql1)
-    total_sp = data.fetchall()
-    total_sp = calculate_total(total_sp)
+    total_sp = [dict(row) for row in data.fetchall()]
+    total_sp = calculate_total(total_sp[0]['Selling_Price'])
     
-    q1 = "SELECT seed_price FROM seed WHERE User_id = '" + session['id'] + "' "  
+    q1 = "SELECT Seed_Price FROM seed WHERE User_id = '" + session['id'] + "' "
     cursor = get_db()
     data=cursor.execute(q1)
-    exp1 = data.fetchall()
-    exp1 = calculate_total(exp1)
+    exp1 = [dict(row) for row in data.fetchall()]
+    exp1 = calculate_total(exp1[0]['Seed_Price'])
     
-    q2 = "SELECT pesticide_price FROM pesticide WHERE User_id = '" + session['id'] + "' "
+    q2 = "SELECT Pesticide_Price FROM pesticide WHERE User_id = '" + session['id'] + "' "
     cursor = get_db()
     data=cursor.execute(q2)
-    exp2 = data.fetchall()
-    exp2 = calculate_total(exp2)
+    exp2 = [dict(row) for row in data.fetchall()]
+    exp2 = calculate_total(exp2[0]['Pesticide_Price'])
 
-    q3 = "SELECT fertilizer_price FROM fertilizer WHERE User_id = '" + session['id'] + "' "
+    q3 = "SELECT Fertilizer_Price FROM fertilizer WHERE User_id = '" + session['id'] + "' "
     cursor = get_db()
     data=cursor.execute(q3)
-    exp3 = data.fetchall()
-    exp3 = calculate_total(exp3)
+    exp3 = [dict(row) for row in data.fetchall()]
+    exp3 = calculate_total(exp3[0]['Fertilizer_Price'])
 
-    q4 = "SELECT salary FROM labour WHERE User_id = '" + session['id'] + "' "
+    q4 = "SELECT Salary FROM labour WHERE User_id = '" + session['id'] + "' "
     cursor = get_db()
     data=cursor.execute(q4)
-    exp4 = data.fetchall()
-    exp4 = calculate_total(exp4)
+    exp4 = [dict(row) for row in data.fetchall()]
+    exp4 = calculate_total(exp4[0]['Salary'])
 
     total_exp = exp1 + exp2 + exp3 + exp4
     values = [exp1, exp2, exp3, exp4]
@@ -549,32 +700,40 @@ def profit_loss_cropwise():
         crop_name = request.form['crop_name']
 
         # getting selling prices of every crop and all expences and calculating its sum
-        sql1 = "SELECT selling_price FROM crop_market WHERE User_id = '" + session['id'] + "' " + " AND crop_name = '" + crop_name + "' "
+        sql1 = "SELECT Selling_Price FROM crop_market WHERE User_id = '" + session['id'] + "' " + " AND crop_name = '" + crop_name + "' "
         cursor = get_db()
         data=cursor.execute(sql1)
-        sp = data.fetchall()
-        sp = calculate_total(sp)
-
-        q1 = "SELECT seed_price FROM seed WHERE User_id = '" + session['id'] + "' " + " AND crop_name = '" + crop_name + "' " 
+        sp = [dict(row) for row in data.fetchall()]
+        try:
+            sp = calculate_total(sp[0]['Selling_Price'])
+        except IndexError as e:
+            sp=0
+        q1 = "SELECT Seed_Price FROM seed WHERE User_id = '" + session['id'] + "' " + " AND crop_name = '" + crop_name + "' "
         cursor = get_db()
         data=cursor.execute(q1)
-        exp1 = data.fetchall()
-        exp1 = calculate_total(exp1)
+        exp1 = [dict(row) for row in data.fetchall()]
+        try:
+            exp1 = calculate_total(exp1[0]['Seed_Price'])
+        except IndexError as e:
+            exp1=0
         
-        
-        q2 = "SELECT pesticide_price FROM pesticide WHERE User_id = '" + session['id'] + "' " + " AND crop_name = '" + crop_name + "' "
+        q2 = "SELECT Pesticide_Price FROM pesticide WHERE User_id = '" + session['id'] + "' " + " AND crop_name = '" + crop_name + "' "
         cursor = get_db()
         data=cursor.execute(q2)
-        exp2 = data.fetchall()
-        exp2 = calculate_total(exp2)
-        
+        exp2 = [dict(row) for row in data.fetchall()]
+        try:
+            exp2 = calculate_total(exp2[0]['Pesticide_Price'])
+        except IndexError as e:
+            exp2=0
 
-        q3 = "SELECT fertilizer_price FROM fertilizer WHERE User_id = '" + session['id'] + "' " + " AND crop_name = '" + crop_name + "' "
+        q3 = "SELECT Fertilizer_Price FROM fertilizer WHERE User_id = '" + session['id'] + "' " + " AND crop_name = '" + crop_name + "' "
         cursor = get_db()
         data=cursor.execute(q3)
-        exp3 = data.fetchall()
-        exp3 = calculate_total(exp3)
-        
+        exp3 = [dict(row) for row in data.fetchall()]
+        try:
+            exp3 = calculate_total(exp3[0]['Fertilizer_Price'])
+        except IndexError as e:
+            exp3=0
         total_exp = exp1 + exp2 + exp3
         values = [exp1, exp2, exp3]
         data = {'user_id': session['id'], 'msg': msg, 'values': values, 'total_exp': total_exp, 'sp': sp, 'color': 'primary'}
